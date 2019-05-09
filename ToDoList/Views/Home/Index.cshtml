@@ -1,36 +1,55 @@
 <html>
-<head>
-<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
 
-<link rel='stylesheet' href='~/css/styles.css'>
+<head>
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
+
+  <link rel='stylesheet' href='~/css/styles.css'>
 </head>
+
 <body>
 
-<div class="container">
-<div class="jumbotron">
-<center><h1>To Do List</h1><center>
-</div>
+  <div class="container">
+    <div class="jumbotron">
+      <center>
+        <h1>To Do List</h1>
+        <center>
+    </div>
 
 
 
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href='/categories/new'>Add a new category</a></li>
-    <li class="breadcrumb-item"><a href='/categories'>View categories</a></li>
-    <li class="breadcrumb-item"><a href='/search_by_category'>Search by category</a></li>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href='/categories/new'>Add a new category</a></li>
+        <li class="breadcrumb-item"><a href='/categories'>View categories</a></li>
+        <li class="breadcrumb-item"><a href='/search_by_category'>Search by category</a></li>
 
-  </ol>
-</nav>
+      </ol>
+    </nav>
 
-<h3>My Categories List</h3>
-<ul>
-  @foreach ( var category in Model)
-  {
-      <p class="card-text"><a href='/categories/@category.GetId()'>@category.GetName()</a></p>
-  }
-</ul>
+    <h3>My Categories List</h3>
+
+    @foreach ( var category in Model)
+    {
+
+    <div class="input-group md-form form-sm form-2 pl-15">
+      <div class="form-control my-0 py-8 amber-border"> <a href='/categories/@category.GetId()'>@category.GetName()</a></div>
+      <div class="input-group-append">
+        <span class="input-group-text amber lighten-3" id="basic-text1"><i class="fas fa-search text-grey" aria-hidden="true"></i><a href='/categories/@category.GetId()'>@category.GetCountItems()</a></span>
+      </div>
+    </div>
 
 
-</div>
+    }
+
+
+
+
+
+
+
+
+
+  </div>
 </body>
+
 </html>
