@@ -155,17 +155,13 @@ public void Find_ReturnsCorrectItemFromDatabase_Item()
 [TestMethod]
 public void Edit_UpdatesItemInDatabase_String()
 {
-	//Arrange
+
 	string firstDescription = "Walk the Dog";
 	Item testItem = new Item(firstDescription);
 	testItem.Save();
 	string secondDescription = "Mow the lawn";
-
-	//Act
 	testItem.Edit(secondDescription);
 	string result = Item.Find(testItem.GetId()).GetDescription();
-
-	//Assert
 	Assert.AreEqual(secondDescription, result);
 }
 

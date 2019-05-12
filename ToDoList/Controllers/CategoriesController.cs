@@ -58,11 +58,11 @@ public ActionResult Show(int id)
 }
 
 [HttpPost("/categories/{categoryId}/items")]
-public ActionResult Create(int categoryId, string itemDescription, DateTime dueDate)
+public ActionResult Create(int categoryId, string itemDescription, DateTime dueDate, bool status)
 {
 	Dictionary<string, object> model = new Dictionary<string, object>();
 	Category foundCategory = Category.Find(categoryId);
-	Item newItem = new Item(itemDescription, dueDate, categoryId);
+	Item newItem = new Item(itemDescription, dueDate, status, categoryId);
 	newItem.Save();
 	// foundCategory.AddItem(newItem);
 	List<Item> categoryItems = foundCategory.GetItems();
@@ -125,10 +125,24 @@ public ActionResult Delete(int categoryId)
 // }
 
 [HttpPost("/categories/{categoryId}/items/{itemId}/edititem")]
-public ActionResult Update(int categoryId, int itemId, string newDescription, DateTime newDueDate)
+public ActionResult Update(int categoryId, int itemId, string newDescription, DateTime newDueDate, bool newStatus)
 {
 	Item item = Item.Find(itemId);
-	item.Edit(newDescription, newDueDate);
+	item.Edit(newDescription, newDueDate, newStatus);
+
+	Dictionary<string, object> model = new Dictionary<string, object>();
+	Category category = Category.Find(categoryId);
+	List<Item> categoryItems = category.GetItems();
+	model.Add("category", category);
+	model.Add("items", categoryItems);
+	return View("Show", model);
+}
+
+[HttpGet("/categories/{categoryId}/items/{itemId}/done")]
+public ActionResult SetStatus(int categoryId, int itemId)
+{
+	Item item = Item.Find(itemId);
+	item.Edit(item.GetDescription(), item.GetDueDate(), true);
 
 	Dictionary<string, object> model = new Dictionary<string, object>();
 	Category category = Category.Find(categoryId);

@@ -206,8 +206,9 @@ public List<Item> GetItems()
 		int itemId = rdr.GetInt32(0);
 		string itemDescription = rdr.GetString(1);
 		DateTime itemDueDate = rdr.GetDateTime(2);
-		int itemCategoryId = rdr.GetInt32(3);
-		Item newItem = new Item(itemDescription, itemDueDate, itemCategoryId, itemId);
+		bool itemStatus = rdr.GetBoolean(3);
+		int itemCategoryId = rdr.GetInt32(4);
+		Item newItem = new Item(itemDescription, itemDueDate,  itemStatus,itemCategoryId, itemId);
 		allCategoryItems.Add(newItem);
 	}
 	conn.Close();

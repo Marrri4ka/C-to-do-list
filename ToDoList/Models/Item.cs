@@ -10,20 +10,33 @@ private string _description;
 private DateTime _duedate;     // field
 private int _id;
 private int _categoryId;
+private bool _status;
 // private static List<Item> _instances = new List<Item>{}; //list
 
-public Item (string description, DateTime duedate, int categoryId,int id=0)      // constructor
+public Item (string description, DateTime duedate, bool status, int categoryId,int id=0)      // constructor
 {
 	_description = description;
 	_duedate = duedate;
+	_status = status;
 	_categoryId = categoryId;
 	// _instances.Add(this); //what is this
 	_id = id;
+
 }
 
 public int GetCategoryId()
 {
 	return _categoryId;
+}
+
+public bool GetStatus()
+{
+	return _status;
+}
+
+public void SetStatus(bool newStatus)
+{
+	_status = newStatus;
 }
 
 
@@ -69,8 +82,9 @@ public static List<Item> GetAll()
 		int itemId = rdr.GetInt32(0);
 		string itemDescription = rdr.GetString(1);
 		DateTime itemDueDate = rdr.GetDateTime(2);
-		int categoryId = rdr.GetInt32(3);
-		Item newItem = new Item (itemDescription,itemDueDate, itemId);
+		bool itemStatus = rdr.GetBoolean(3);
+		int categoryId = rdr.GetInt32(4);
+		Item newItem = new Item (itemDescription,itemDueDate,itemStatus, itemId);
 		allItems.Add(newItem);
 	}
 
@@ -101,8 +115,9 @@ public static List<Item> Sort()
 		int itemId = rdr.GetInt32(0);
 		string itemDescription = rdr.GetString(1);
 		DateTime itemDueDate = rdr.GetDateTime(2);
-		// int itemCategoryId = rdr.GetInt32(3);
-		Item newItem = new Item (itemDescription,itemDueDate,itemId);
+		bool itemStatus = rdr.GetBoolean(3);
+		int categoryId = rdr.GetInt32(4);
+		Item newItem = new Item (itemDescription,itemDueDate,itemStatus,itemId);
 		allItems.Add(newItem);
 	}
 
@@ -162,6 +177,7 @@ public override bool Equals(System.Object otherItem)
 
 		bool idEquality = this.GetId() == newItem.GetId();
 		bool descriptionEquality = this.GetDescription() == newItem.GetDescription();
+		bool statusEquality = this.GetStatus() == newItem.GetStatus();
 		bool categoryEquality = this.GetCategoryId() == newItem.GetCategoryId();
 		return (idEquality && descriptionEquality);
 	}
@@ -173,7 +189,7 @@ public void Save()
 	conn.Open();
 	var cmd = conn.CreateCommand() as MySqlCommand;
 
-	cmd.CommandText = @"INSERT INTO items (description, duedate, category_id) VALUES (@ItemDescription, @ItemDueDate, @ItemCategoryId);";
+	cmd.CommandText = @"INSERT INTO items (description, duedate, status, category_id) VALUES (@ItemDescription, @ItemDueDate, @ItemStatus,@ItemCategoryId);";
 
 	MySqlParameter descriptionParameter = new MySqlParameter();
 	descriptionParameter.ParameterName = "@ItemDescription";
@@ -184,6 +200,12 @@ public void Save()
 	dueDateParameter.ParameterName = "@ItemDueDate";
 	dueDateParameter.Value = this._duedate;
 	cmd.Parameters.Add(dueDateParameter);
+
+
+	MySqlParameter statusParameter = new MySqlParameter();
+	statusParameter.ParameterName = "@ItemStatus";
+	statusParameter.Value = this._status;
+	cmd.Parameters.Add(statusParameter);
 
 	MySqlParameter categoryParameter = new MySqlParameter();
 	categoryParameter.ParameterName = "@ItemCategoryId";
@@ -202,7 +224,7 @@ public void Save()
 }
 
 
-public void Edit(string newDescription, DateTime newduedate)
+public void Edit(string newDescription, DateTime newduedate, bool newstatus)
 {
 	MySqlConnection conn = DB.Connection();
 	conn.Open();
@@ -234,8 +256,25 @@ public void Edit(string newDescription, DateTime newduedate)
 	cmd.Parameters.Add(duedate);
 	cmd.ExecuteNonQuery();
 
+
+	cmd = conn.CreateCommand() as MySqlCommand;
+	cmd.CommandText = @"UPDATE items SET status = @newstatus WHERE id = @searchId;";
+
+	searchId = new MySqlParameter();
+	searchId.ParameterName = "@searchId";
+	searchId.Value = _id;
+	cmd.Parameters.Add(searchId);
+
+	MySqlParameter status = new MySqlParameter();
+	status.ParameterName = "@newstatus";
+	status.Value = newstatus;
+	cmd.Parameters.Add(status);
+	cmd.ExecuteNonQuery();
+
+
 	_description = newDescription;
 	_duedate = newduedate;
+	_status = newstatus;
 
 	conn.Close();
 	if (conn != null)
@@ -267,6 +306,7 @@ public static Item Find (int id)
 	int itemId=0;
 	string itemDescription ="";
 	DateTime itemDueDate = new DateTime();
+	bool itemStatus = false;
 	int itemCategoryId = 0;
 
 	while(rdr.Read())
@@ -274,16 +314,17 @@ public static Item Find (int id)
 		itemId = rdr.GetInt32(0);
 		itemDescription = rdr.GetString(1);
 		itemDueDate = rdr.GetDateTime(2);
-		itemCategoryId = rdr.GetInt32(3);
+		itemStatus = rdr.GetBoolean(3);
+		itemCategoryId = rdr.GetInt32(4);
 	}
-	Item fountItem = new Item (itemDescription,itemDueDate, itemCategoryId, itemId);
+	Item foundItem = new Item (itemDescription,itemDueDate, itemStatus,itemCategoryId, itemId);
 
 	conn.Close();
 	if(conn != null)
 	{
 		conn.Dispose();
 	}
-	return fountItem;
+	return foundItem;
 }
 
 

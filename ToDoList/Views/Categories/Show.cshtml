@@ -6,33 +6,45 @@
 
 </head>
 
-<center><body>
-  <div class="jumbotron">
+<center>
+
+  <body>
+    <div class="jumbotron">
 
 
-  <h3>Here are all of the items in this category:</h3>
+      <h3>Here are all of the items in this category:</h3>
 
 
-    @foreach (var item in @Model["items"])
-    {
+      @foreach (var item in @Model["items"])
+      {
       <div class="card">
         <div class="card-header">
-        <a href='/categories/@Model["category"].GetId()/items/@item.GetId()'>
-          @item.GetDescription()
-        </a>
+          <a href='/categories/@Model["category"].GetId()/items/@item.GetId()'>
+            @if(@item.GetStatus())
+            {
+            <strike> @item.GetDescription() </strike>
+            }
+            else
+            {
+            @item.GetDescription();
+            }
+
+          </a>
 
         </div>
         <div class="card-body">
-          <h5 class="card-title">  <a href='/categories/@Model["category"].GetId()/items/@item.GetId()'>
-           @item.GetDueDate()
+          <h5 class="card-title"> <a href='/categories/@Model["category"].GetId()/items/@item.GetId()'>
+              @item.GetDueDate()
             </a>
-</h5>
+          </h5>
 
-        <form action='/categories/@Model["category"].GetId()/items/@item.GetId()/deleteitem' method="post">
+          <form action='/categories/@Model["category"].GetId()/items/@item.GetId()/deleteitem' method="post">
 
             <button type="submit" name="button">Delete item</button>
           </form>
-            <button type="submit" name="button">  <a href='/categories/@Model["category"].GetId()/items/@item.GetId()/edit'>Edit this item</a></button>
+          <button type="submit" name="button"> <a href='/categories/@Model["category"].GetId()/items/@item.GetId()/edit'>Edit this item</a></button>
+          <button type="submit" name="button"> <a href='/categories/@Model["category"].GetId()/items/@item.GetId()/done'>Done</a></button>
+
         </div>
       </div>
 
@@ -40,19 +52,20 @@
 
 
 
-    }
+      }
 
-    <button type="button" class="btn btn-warning btn-sm btn-block"><a href='/categories/@Model["category"].GetId()/items/new'>Add a new item</a></button>
-<button type="button" class="btn btn-info btn-sm btn-block"><a href='/categories/@Model["category"].GetId()/itemssort'>Sort by duedate</a></button>
-<button type="button" class="btn btn-success btn-sm btn-block"><a href='/categories'>Return to category list</a></button>
-<button type="button" class="btn btn-danger btn-sm btn-block"><a href='/'>Return to Main Page</a></button>
-
-
+      <button type="button" class="btn btn-warning btn-sm btn-block"><a href='/categories/@Model["category"].GetId()/items/new'>Add a new item</a></button>
+      <button type="button" class="btn btn-info btn-sm btn-block"><a href='/categories/@Model["category"].GetId()/itemssort'>Sort by duedate</a></button>
+      <button type="button" class="btn btn-success btn-sm btn-block"><a href='/categories'>Return to category list</a></button>
+      <button type="button" class="btn btn-danger btn-sm btn-block"><a href='/'>Return to Main Page</a></button>
 
 
 
 
-</div>
-</body>
+
+
+    </div>
+  </body>
 </center>
+
 </html>
